@@ -1,6 +1,9 @@
 # coding=utf-8
 from random import randint
 
+from singleProcess.DataReader import readData
+
+
 def get_gini_index(leftDataSet, rightDataSet):
     """
     计算基尼系数（数据集的不纯度），越小说明分得越准确
@@ -83,9 +86,58 @@ def get_best_node(dataSet, features):
     }
     return tree_node
 
+#决定输出标签
+def get_class_type(node_data):
+    """
+    获取结点的类型
+    :param node_data:
+    :return:
+    """
+    output=[row[0] for row in node_data]
+    return max(set(output),key=output.count)
 
+def sub_spilt(root,feature_num,max_depth,min_size,depth):
+    """分裂获得树"""
+    left=root['left']
+    right=root['right']
+    del(root['left'])
+    del(root['right'])
 
+    if not left or not right:
+        root['left']=root['right']=get_class_type(left+right)
+        #print 'testing'
+        return
+    if depth > max_depth:
+        root['left']=get_class_type(left)
+        root['right']=get_class_type(right)
+        return
 
+    if len(left) < min_size:
+        root['left']=get_class_type(left)
+    else:
+        features = get_features(feature_num)
+        root['left'] = get_best_node(left,features)
+        #print 'testing_left'
+        sub_spilt(root['left'],feature_num,max_depth,min_size,depth+1)
+
+    if len(right) < min_size:
+        root['right']=get_class_type(right)
+    else:
+        features = get_features(feature_num)
+        root['right'] = get_best_node(right,features)
+        #print 'testing_right'
+        sub_spilt(root['right'],feature_num,max_depth,min_size,depth+1)
+
+def build_tree(dataSet,feature_num,max_depth,min_size):
+    features = get_features(feature_num)
+    root=get_best_node(dataSet,features)
+    sub_spilt(root,feature_num,max_depth,min_size,1)
+    return root
+
+if __name__ == '__main__':
+    dataSet = readData("train_data_min.txt")
+    root = build_tree(dataSet, 5, 10, 10)
+    print(str(root))
 
 
 
