@@ -134,10 +134,10 @@ def build_tree(dataSet,feature_num,max_depth,min_size):
     sub_spilt(root,feature_num,max_depth,min_size,1)
     return root
 
-if __name__ == '__main__':
-    dataSet = readData("train_data_min.txt")
-    root = build_tree(dataSet, 5, 10, 10)
-    print(str(root))
+# if __name__ == '__main__':
+#     dataSet = readData("train_data_min.txt")
+#     root = build_tree(dataSet, 5, 10, 10)
+    # print(str(root))
 
 
 
